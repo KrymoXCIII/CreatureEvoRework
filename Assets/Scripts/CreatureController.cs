@@ -6,8 +6,9 @@ public class CreatureController : MonoBehaviour
 {
     // Variables d'environnement  
     public float distanceTraveled;
-    private float slopeAngle;
-    private float speed;
+    public float slopeAngle;
+    //public float headHeight;
+    public float speed;
     public float distanceToTarget;
 
     private Vector3 startingPosition;
@@ -32,24 +33,34 @@ public class CreatureController : MonoBehaviour
     // Variable pour l'objectif
     public Transform target;
 
-    
+    // variable pour le compteur
+    private DateTime startTime;
 
-    private void Start()
+
+    private void Awake()
     {
-        startingPosition = transform.position;
-        rb = GetComponent<Rigidbody>();
         target = GameObject.Find("Target").transform;
+        distanceToTarget = Vector3.Distance(transform.position, target.position);
         // Récupérer les `HingeJoint` attachés aux Rigidbodies des jambes
         leftHingeJoint = leftLeg.GameObject().GetComponent<HingeJoint>();
         rightHingeJoint = rightLeg.GameObject().GetComponent<HingeJoint>();
+        startingPosition = transform.position;
+        rb = GetComponent<Rigidbody>();
+    }
+
+    private void Start()
+    {
+        startTime = DateTime.Now;
     }
 
     private void Update()
     {
         // Calculez la distance parcourue depuis le début de la simulation
         distanceTraveled = Vector3.Distance(startingPosition, transform.position);
-
+        // Distance entre la créature et l'objectif
+        distanceToTarget = Vector3.Distance(transform.position, target.position);
         // Raycast vers le bas à partir des pieds de la créature pour détecter la pente
+        
         RaycastHit leftHit;
         RaycastHit rightHit;
         float maxRaycastDistance = 1.0f; // Ajustez cette valeur selon la hauteur de vos pieds par rapport au sol
@@ -64,8 +75,26 @@ public class CreatureController : MonoBehaviour
             }
         }
 
+       /*RaycastHit headHit;
+       if(Physics.Raycast(transform.position,Vector3.down, out headHit))
+       {
+           headHeight = Vector3.Distance(transform.position, headHit.point);
+       }
+        */
+       
         // Obtenez la vitesse linéaire du Rigidbody
         speed = rb.velocity.magnitude;
+        
+        // Obtenez les informations d'environnement (inputs) à chaque mise à jour
+        float[] environmentInputs = GetEnvironmentInputs();
+
+        // Utilisez les valeurs d'environnement dans le réseau de neurones
+        float[] outputs = neuralNetwork.FeedForward(environmentInputs);
+        SetOutputValues(outputs[0], outputs[1]);
+
+        // Appliquer les forces aux articulations pour marcher
+        leftLeg.AddForce(Vector3.forward * leftLegForce);
+        rightLeg.AddForce(Vector3.forward * rightLegForce);
     }
 
     // Méthode pour appliquer les forces aux articulations
@@ -97,29 +126,37 @@ public class CreatureController : MonoBehaviour
     {
         leftLegForce = leftForce;
         rightLegForce = rightForce;
+        
     }
 
     // Méthode pour contrôler les jambes avec les `HingeJoint`
     public void SetLegAngles(float leftAngle, float rightAngle)
     {
         // Appliquer l'angle aux `HingeJoint`
-        JointSpring leftSpring = leftHingeJoint.spring;
-        leftSpring.targetPosition = leftAngle;
-        leftHingeJoint.spring = leftSpring;
+        try
+        {
+            JointSpring leftSpring = leftHingeJoint.spring;
+            leftSpring.targetPosition = leftAngle;
+            leftHingeJoint.spring = leftSpring;
 
-        JointSpring rightSpring = rightHingeJoint.spring;
-        rightSpring.targetPosition = rightAngle;
-        rightHingeJoint.spring = rightSpring;
+            JointSpring rightSpring = rightHingeJoint.spring;
+            rightSpring.targetPosition = rightAngle;
+            rightHingeJoint.spring = rightSpring;
+        }
+        catch (Exception e)
+        {
+            Debug.Log("Exception : " + e);
+        }
+        
     }
 
     // Méthode pour obtenir les informations d'environnement (inputs)
     // Cette méthode doit être appelée dans la mise à jour de votre simulation pour mettre à jour les valeurs des inputs
     public float[] GetEnvironmentInputs()
     {
-        // Remplacez les valeurs ci-dessous par les véritables données d'environnement que votre créature reçoit
-        // Par exemple, vous pouvez obtenir la distance parcourue, l'angle de la pente, la vitesse, etc.
+        Debug.Log("GetEnvironmentInputs()");
 
-        distanceToTarget = Vector3.Distance(transform.position, target.position); // Distance entre la créature et l'objectif
+
 
         // Retourner les valeurs des inputs sous forme d'un tableau
         return new float[] { distanceTraveled, slopeAngle, speed, distanceToTarget };
@@ -127,7 +164,7 @@ public class CreatureController : MonoBehaviour
 
     public bool TerminationConditionMet()
     {
-        if (distanceToTarget <= 3) return true;
+        if (distanceToTarget <= 1 || DateTime.Now >= startTime.AddSeconds(10) ) return true;
         else return false;
     }
 }

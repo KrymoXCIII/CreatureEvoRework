@@ -130,4 +130,110 @@ public class NeuralNetwork
             }
         }
     }
+    
+
+
+
+   // Method to perform crossover between two parent neural networks
+public NeuralNetwork Crossover(NeuralNetwork parent2)
+{
+    // Create a new neural network for the child
+    NeuralNetwork child = new NeuralNetwork(inputSize, hiddenSize, outputSize);
+
+    // Define a crossover rate (the probability of performing crossover)
+    float crossoverRate = 0.7f;
+
+    // Perform crossover for weights between input and hidden layers
+    for (int i = 0; i < inputSize; i++)
+    {
+        for (int j = 0; j < hiddenSize; j++)
+        {
+            // Perform crossover with a probability of crossoverRate
+            if (Random.value < crossoverRate)
+            {
+                // Use a random parent's weight for the child
+                if (Random.value < 0.5f)
+                {
+                    child.weightsInputHidden[i, j] = this.weightsInputHidden[i, j];
+                }
+                else
+                {
+                    child.weightsInputHidden[i, j] = parent2.weightsInputHidden[i, j];
+                }
+            }
+            else
+            {
+                // If no crossover, copy the weight from one of the parents
+                child.weightsInputHidden[i, j] = Random.value < 0.5f ? this.weightsInputHidden[i, j] : parent2.weightsInputHidden[i, j];
+            }
+        }
+    }
+
+    // Perform crossover for weights between hidden and output layers
+    for (int i = 0; i < hiddenSize; i++)
+    {
+        for (int j = 0; j < outputSize; j++)
+        {
+            // Perform crossover with a probability of crossoverRate
+            if (Random.value < crossoverRate)
+            {
+                // Use a random parent's weight for the child
+                if (Random.value < 0.5f)
+                {
+                    child.weightsHiddenOutput[i, j] = this.weightsHiddenOutput[i, j];
+                }
+                else
+                {
+                    child.weightsHiddenOutput[i, j] = parent2.weightsHiddenOutput[i, j];
+                }
+            }
+            else
+            {
+                // If no crossover, copy the weight from one of the parents
+                child.weightsHiddenOutput[i, j] = Random.value < 0.5f ? this.weightsHiddenOutput[i, j] : parent2.weightsHiddenOutput[i, j];
+            }
+        }
+    }
+
+    return child;
+}
+
+
+    
+    // Method to perform mutation on the neural network
+    public void Mutate()
+    {
+        // Define a mutation rate (the probability of mutation for each weight)
+        float mutationRate = 0.1f;
+
+        for (int i = 0; i < inputSize; i++)
+        {
+            for (int j = 0; j < hiddenSize; j++)
+            {
+                // Randomly perturb each weight with a probability of mutationRate
+                if (Random.value < mutationRate)
+                {
+                    // Perturb the weight by adding a small random value between -0.1 and 0.1
+                    weightsInputHidden[i, j] += Random.Range(-0.1f, 0.1f);
+                }
+            }
+        }
+
+        for (int i = 0; i < hiddenSize; i++)
+        {
+            for (int j = 0; j < outputSize; j++)
+            {
+                // Randomly perturb each weight with a probability of mutationRate
+                if (Random.value < mutationRate)
+                {
+                    // Perturb the weight by adding a small random value between -0.1 and 0.1
+                    weightsHiddenOutput[i, j] += Random.Range(-0.1f, 0.1f);
+                }
+            }
+        }
+    }
+
+
+
+
 }

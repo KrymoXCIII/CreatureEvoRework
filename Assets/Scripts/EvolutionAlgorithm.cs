@@ -25,6 +25,7 @@ public class EvolutionAlgorithm : MonoBehaviour
     // Call this method to start the evolution
     public void StartEvolution()
     {
+        Debug.Log("Start Evolution");
         evolving = true;
         population = new List<NeuralNetwork>();
 
@@ -52,7 +53,7 @@ public class EvolutionAlgorithm : MonoBehaviour
     // Method to spawn a new creature with the given neural network
     private void SpawnCreature(NeuralNetwork neuralNetwork)
     {
-
+        Debug.Log(("Spawning Creature  "));
         if (currentCreatureController != null)
         {
             Destroy(currentCreatureController.gameObject);
@@ -72,6 +73,7 @@ public class EvolutionAlgorithm : MonoBehaviour
     // Method to move on to the next creature in the population
     private void NextCreature()
     {
+        Debug.Log("Next Creature");
         currentCreatureIndex++;
         if (currentCreatureIndex < population.Count)
         {
@@ -84,15 +86,59 @@ public class EvolutionAlgorithm : MonoBehaviour
         }
     }
 
+    
+    // Method to evolve the population
     // Method to evolve the population
     private void EvolvePopulation()
     {
-        // Perform the evolution algorithm here (selection, reproduction, mutation, etc.)
+        Debug.Log("Evolve Population");
 
-        // For this example, we will simply reset the simulation with the first creature of the population
+        // Sort the population by fitness in descending order
+        population.Sort((a, b) => b.fitness.CompareTo(a.fitness));
+
+        // Select the top-performing individuals as parents for the next generation
+        List<NeuralNetwork> parents = new List<NeuralNetwork>();
+        int numParents = Mathf.Min(populationSize / 2, population.Count); // Select the top half of the population as parents
+
+        for (int i = 0; i < numParents; i++)
+        {
+            parents.Add(population[i]);
+        }
+
+        // Create the next generation through crossover and mutation
+        List<NeuralNetwork> nextGeneration = new List<NeuralNetwork>();
+
+        while (nextGeneration.Count < populationSize)
+        {
+            NeuralNetwork parent1 = parents[Random.Range(0, numParents)];
+            NeuralNetwork parent2 = parents[Random.Range(0, numParents)];
+
+            // Perform crossover to create a child neural network
+            NeuralNetwork child = parent1.Crossover(parent2);
+
+            // Perform mutation on the child neural network
+            child.Mutate();
+
+            // Add the child to the next generation
+            nextGeneration.Add(child);
+        }
+
+        // Replace the old population with the new generation
+        population = nextGeneration;
+
+        // Reset the index for the current creature
         currentCreatureIndex = 0;
+
+        // Spawn the first creature of the new population
         SpawnCreature(population[currentCreatureIndex]);
     }
+
+    
+
+    
+
+
+
 
     private void Update()
     {
@@ -113,9 +159,26 @@ public class EvolutionAlgorithm : MonoBehaviour
     // Method to calculate the fitness of a creature (you can customize this based on your requirements)
     private float CalculateFitness(CreatureController creature)
     {
-        // Example fitness calculation:
-        float distanceScore = 1f / (1f + creature.distanceTraveled);
+        
+        // Orientation verticale (plus proche de la verticale est meilleur)
+        float verticalOrientationScore = 1f / (1f + Mathf.Abs(180f - creature.slopeAngle));
+
+        // Orientation verticale (plus proche de la verticale est meilleur)
+        //float verticalOrientationScore = 1f / (1f + Mathf.Abs(creature.slopeAngle));
+
+        // Distance entre la créature et l'objectif (plus proche de l'objectif est meilleur)
         float proximityScore = 1f / (1f + creature.distanceToTarget);
-        return (distanceScore + proximityScore) / 2f;
+
+        // Poids attribués à chaque critère (ajustez ces valeurs selon vos préférences)
+        float verticalOrientationWeight = 0.7f;
+        float proximityWeight = 0.3f;
+
+        
+        // Calcul de la fitness en combinant les critères avec les poids
+        float fitness = verticalOrientationWeight * verticalOrientationScore + proximityWeight * proximityScore;
+
+        return fitness;
     }
+
+
 }
