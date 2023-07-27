@@ -4,208 +4,118 @@ using UnityEngine;
 public class EvolutionAlgorithm : MonoBehaviour
 {
     public int populationSize = 100;
-    public int inputSize = 4; // Remplacez cela par la taille des entrées réelle de votre créature
+    public int inputSize = 4; // Replace this with the actual input size of your creature
     public int hiddenSize = 8;
-    public int outputSize = 2; // Remplacez cela par la taille des sorties réelle de votre créature
+    public int outputSize = 2; // Replace this with the actual output size of your creature
+
+    public GameObject creaturePrefab; // Drag your creature prefab here
+    public Transform spawnPoint; // Drag the spawn point GameObject here
 
     private List<NeuralNetwork> population;
     private int currentCreatureIndex = 0;
 
-    private CreatureController creatureController;
-
-    private void Awake()
-    {
-        creatureController = GameObject.Find("Creature").GetComponent<CreatureController>();
-    }
+    private CreatureController currentCreatureController;
+    private bool evolving = false;
 
     private void Start()
     {
         StartEvolution();
     }
-    
 
-    // Appeler cette méthode pour démarrer l'évolution
+    // Call this method to start the evolution
     public void StartEvolution()
     {
+        evolving = true;
         population = new List<NeuralNetwork>();
 
-        // Créer une population initiale de réseaux de neurones
+        // Create an initial population of neural networks
         for (int i = 0; i < populationSize; i++)
         {
             NeuralNetwork neuralNetwork = new NeuralNetwork(inputSize, hiddenSize, outputSize);
             population.Add(neuralNetwork);
         }
 
-        // Lancer la simulation avec la première créature de la population
+        // Spawn the first creature of the population
         if (population.Count > 0)
         {
             currentCreatureIndex = 0;
-            ApplyNeuralNetworkToCreature(population[currentCreatureIndex]);
+            SpawnCreature(population[currentCreatureIndex]);
         }
     }
 
-    // Appeler cette méthode pour passer à la créature suivante dans la population
+    // Call this method to stop the evolution
+    public void StopEvolution()
+    {
+        evolving = false;
+    }
+
+    // Method to spawn a new creature with the given neural network
+    private void SpawnCreature(NeuralNetwork neuralNetwork)
+    {
+
+        if (currentCreatureController != null)
+        {
+            Destroy(currentCreatureController.gameObject);
+        }
+                
+
+        GameObject newCreature = Instantiate(creaturePrefab, spawnPoint.position, Quaternion.identity);
+        currentCreatureController = newCreature.GetComponent<CreatureController>();
+        currentCreatureController.SetOutputValues(0f, 0f); // Optionally set initial output values
+        currentCreatureController.SetLegAngles(0f, 0f); // Optionally set initial leg angles
+        currentCreatureController.SetNeuralNetwork(neuralNetwork); // Set the neural network of the creature
+    
+        
+
+    }
+
+    // Method to move on to the next creature in the population
     private void NextCreature()
     {
         currentCreatureIndex++;
         if (currentCreatureIndex < population.Count)
         {
-            ApplyNeuralNetworkToCreature(population[currentCreatureIndex]);
+            SpawnCreature(population[currentCreatureIndex]);
         }
         else
         {
-            // Toutes les créatures ont été testées, déclencher l'étape d'évolution
+            // All creatures have been tested, trigger the evolution step
             EvolvePopulation();
         }
     }
 
-    // Appliquer le réseau de neurones à la créature pour la tester
-    private void ApplyNeuralNetworkToCreature(NeuralNetwork neuralNetwork)
-    {
-        creatureController = GameObject.Find("Creature").GetComponent<CreatureController>();
-
-        // Obtenir les inputs de l'environnement à partir du CreatureController
-        float[] inputs = creatureController.GetEnvironmentInputs();
-
-        // Appliquer les inputs au réseau de neurones
-        float[] outputs = neuralNetwork.FeedForward(inputs);
-
-        // Contrôler les jambes avec les forces calculées par le réseau de neurones
-        creatureController.SetOutputValues(outputs[0], outputs[1]);
-
-
-    }
-
-    // Méthode pour évoluer la population
+    // Method to evolve the population
     private void EvolvePopulation()
     {
-        // Sélectionner deux réseaux parents aléatoires
-        int parentIndex1 = Random.Range(0, population.Count);
-        int parentIndex2 = Random.Range(0, population.Count);
+        // Perform the evolution algorithm here (selection, reproduction, mutation, etc.)
 
-        // Créer un nouveau réseau enfant en croisant les parents
-        NeuralNetwork parent1 = population[parentIndex1];
-        NeuralNetwork parent2 = population[parentIndex2];
-        NeuralNetwork child = CrossOver(parent1, parent2);
-
-        // Appliquer une petite mutation au réseau enfant
-        Mutate(child);
-
-        // Remplacer le réseau le moins performant dans la population par le réseau enfant
-        int worstIndex = FindWorstNetwork();
-        population[worstIndex] = child;
-
-        // Passer à la créature suivante dans la population
-        NextCreature();
+        // For this example, we will simply reset the simulation with the first creature of the population
+        currentCreatureIndex = 0;
+        SpawnCreature(population[currentCreatureIndex]);
     }
 
-    private NeuralNetwork CrossOver(NeuralNetwork parent1, NeuralNetwork parent2)
+    private void Update()
     {
-        NeuralNetwork child = new NeuralNetwork(inputSize, hiddenSize, outputSize);
-
-        // Croiser les poids des parents pour créer un nouvel enfant
-        float[] parent1Weights = parent1.GetWeights();
-        float[] parent2Weights = parent2.GetWeights();
-        float[] childWeights = new float[parent1Weights.Length];
-
-        // Choisissez un point de croisement aléatoire
-        int crossoverPoint = Random.Range(0, parent1Weights.Length);
-
-        // Appliquez les poids du parent1 jusqu'au point de croisement
-        for (int i = 0; i < crossoverPoint; i++)
+        // Check if the evolution is in progress
+        if (evolving)
         {
-            childWeights[i] = parent1Weights[i];
-        }
-
-        // Appliquez les poids du parent2 à partir du point de croisement
-        for (int i = crossoverPoint; i < parent2Weights.Length; i++)
-        {
-            childWeights[i] = parent2Weights[i];
-        }
-
-        // Appliquer les poids au réseau enfant
-        child.SetWeights(childWeights);
-
-        return child;
-    }
-
-    // Méthode pour appliquer une petite mutation à un réseau de neurones
-    private void Mutate(NeuralNetwork neuralNetwork)
-    {
-        float[] weights = neuralNetwork.GetWeights();
-
-        // Choisissez un index aléatoire pour effectuer la mutation
-        int mutationIndex = Random.Range(0, weights.Length);
-
-        // Appliquez une petite variation au poids sélectionné
-        float mutationAmount = Random.Range(-0.1f, 0.1f);
-        weights[mutationIndex] += mutationAmount;
-
-        // Appliquer les poids mutés au réseau de neurones
-        neuralNetwork.SetWeights(weights);
-    }
-
-    // Méthode pour trouver l'index du réseau le moins performant dans la population
-    private int FindWorstNetwork()
-    {
-        float worstFitness = float.MaxValue;
-        int worstIndex = 0;
-
-        // Parcourez tous les réseaux de la population pour trouver le moins performant
-        for (int i = 0; i < population.Count; i++)
-        {
-            NeuralNetwork network = population[i];
-            // Remplacez fitnessFunction par la méthode que vous utilisez pour évaluer la performance des réseaux
-            float fitness = fitnessFunction(network);
-            if (fitness < worstFitness)
+            // Check the termination condition for the current creature (e.g., reached target, distance traveled, etc.)
+            // If the termination condition is met, calculate the fitness and move to the next creature
+            if (currentCreatureController.TerminationConditionMet())
             {
-                worstFitness = fitness;
-                worstIndex = i;
+                float fitness = CalculateFitness(currentCreatureController);
+                population[currentCreatureIndex].fitness = fitness;
+                NextCreature();
             }
         }
-
-        return worstIndex;
     }
 
-    private float FitnessFunction(NeuralNetwork neuralNetwork)
+    // Method to calculate the fitness of a creature (you can customize this based on your requirements)
+    private float CalculateFitness(CreatureController creature)
     {
-        // Réinitialiser la position de la créature avant de tester le réseau de neurones
-        creatureController.transform.position = creatureController.startingPosition;
-        creatureController.distanceTraveled = 0f;
-
-        // Durée maximale pour tester le réseau de neurones (par exemple, 10 secondes)
-        float maxTestDuration = 10f;
-        float testDuration = 0f;
-
-        while (testDuration < maxTestDuration)
-        {
-            // Obtenir les inputs de l'environnement à partir du CreatureController
-            float[] inputs = creatureController.GetEnvironmentInputs();
-
-            // Appliquer les inputs au réseau de neurones
-            float[] outputs = neuralNetwork.FeedForward(inputs);
-
-            // Contrôler les jambes avec les forces calculées par le réseau de neurones
-            creatureController.SetOutputValues(outputs[0], outputs[1]);
-
-            // Mettre à jour la durée du test
-            testDuration += Time.deltaTime;
-
-            // Mettre à jour la distance parcourue par la créature
-            creatureController.distanceTraveled = Vector3.Distance(creatureController.startingPosition, creatureController.transform.position);
-
-            // Sortir de la boucle si la créature atteint l'objectif
-            if (creatureController.distanceToTarget < 1f)
-            {
-                break;
-            }
-        }
-
-        // Plus la créature atteint rapidement l'objectif, meilleure est sa performance (fitness)
-        float fitness = 1f / testDuration;
-
-        return fitness;
+        // Example fitness calculation:
+        float distanceScore = 1f / (1f + creature.distanceTraveled);
+        float proximityScore = 1f / (1f + creature.distanceToTarget);
+        return (distanceScore + proximityScore) / 2f;
     }
-
-
 }

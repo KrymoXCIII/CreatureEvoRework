@@ -1,7 +1,6 @@
-using System.Collections.Generic;
 using UnityEngine;
 
-public class NeuralNetwork
+public class NeuralNetwork 
 {
     private int inputSize;
     private int hiddenSize;
@@ -10,20 +9,22 @@ public class NeuralNetwork
     private float[,] weightsInputHidden;
     private float[,] weightsHiddenOutput;
 
-    // Constructeur pour initialiser la taille du réseau de neurones et les poids aléatoirement
+    public float fitness;
+
+    // Constructeur pour initialiser la taille du rÃ©seau de neurones et les poids alÃ©atoirement
     public NeuralNetwork(int inputSize, int hiddenSize, int outputSize)
     {
         this.inputSize = inputSize;
         this.hiddenSize = hiddenSize;
         this.outputSize = outputSize;
 
-        // Initialiser les poids aléatoirement entre -1 et 1
+        // Initialiser les poids alÃ©atoirement entre -1 et 1
         weightsInputHidden = new float[inputSize, hiddenSize];
         weightsHiddenOutput = new float[hiddenSize, outputSize];
         InitializeRandomWeights();
     }
 
-    // Initialiser les poids aléatoirement
+    // Initialiser les poids alÃ©atoirement
     private void InitializeRandomWeights()
     {
         for (int i = 0; i < inputSize; i++)
@@ -43,13 +44,13 @@ public class NeuralNetwork
         }
     }
 
-    // Méthode pour effectuer la propagation avant dans le réseau de neurones
+    // MÃ©thode pour effectuer la propagation avant dans le rÃ©seau de neurones
     public float[] FeedForward(float[] inputs)
     {
         float[] hiddenLayer = new float[hiddenSize];
         float[] outputLayer = new float[outputSize];
 
-        // Calculer la couche cachée
+        // Calculer la couche cachÃ©e
         for (int i = 0; i < hiddenSize; i++)
         {
             float sum = 0f;
@@ -74,28 +75,41 @@ public class NeuralNetwork
         return outputLayer;
     }
 
-    // Fonction d'activation (vous pouvez utiliser une fonction différente selon les besoins)
+    // Fonction d'activation (vous pouvez utiliser une fonction diffÃ©rente selon les besoins)
     private float ActivationFunction(float value)
     {
         return Mathf.Clamp(value, -1f, 1f);
     }
 
-    // Méthode pour obtenir les poids du réseau de neurones
+    // MÃ©thode pour obtenir les poids du rÃ©seau de neurones
     public float[] GetWeights()
     {
-        List<float> weightsList = new List<float>();
-        foreach (float weight in weightsInputHidden)
+        int totalWeights = inputSize * hiddenSize + hiddenSize * outputSize;
+        float[] weightsList = new float[totalWeights];
+        int count = 0;
+
+        for (int i = 0; i < inputSize; i++)
         {
-            weightsList.Add(weight);
+            for (int j = 0; j < hiddenSize; j++)
+            {
+                weightsList[count] = weightsInputHidden[i, j];
+                count++;
+            }
         }
-        foreach (float weight in weightsHiddenOutput)
+
+        for (int i = 0; i < hiddenSize; i++)
         {
-            weightsList.Add(weight);
+            for (int j = 0; j < outputSize; j++)
+            {
+                weightsList[count] = weightsHiddenOutput[i, j];
+                count++;
+            }
         }
-        return weightsList.ToArray();
+
+        return weightsList;
     }
 
-    // Méthode pour définir les poids du réseau de neurones
+    // MÃ©thode pour dÃ©finir les poids du rÃ©seau de neurones
     public void SetWeights(float[] weights)
     {
         int count = 0;

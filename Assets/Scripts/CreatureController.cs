@@ -1,52 +1,55 @@
+using System;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class CreatureController : MonoBehaviour
 {
-    //Variables d'environnement  
-    private float distanceTraveled;
-    private float slopeAngle;   
+    // Variables d'environnement  
+    public float distanceTraveled;
+    private float slopeAngle;
     private float speed;
-    private float distanceToTarget;
-    //
+    public float distanceToTarget;
 
     private Vector3 startingPosition;
     public Transform leftFoot;
     public Transform rightFoot;
     private Rigidbody rb;
-    // 
 
-    // Variables pour les articulations de la créature
+    private NeuralNetwork neuralNetwork;
+
+    // Variables pour les articulations de la crÃ©ature
     public Rigidbody leftLeg;
     public Rigidbody rightLeg;
 
-    // Variables pour contrôler les `HingeJoint`
+    // Variables pour contrÃ´ler les `HingeJoint`
     private HingeJoint leftHingeJoint;
     private HingeJoint rightHingeJoint;
 
-    // Variables pour les valeurs de sortie du réseau de neurones
+    // Variables pour les valeurs de sortie du rÃ©seau de neurones
     private float leftLegForce;
     private float rightLegForce;
 
     // Variable pour l'objectif
     public Transform target;
 
+    
+
     private void Start()
     {
         startingPosition = transform.position;
         rb = GetComponent<Rigidbody>();
-
-        // Récupérer les `HingeJoint` attachés aux Rigidbodies des jambes
-        leftHingeJoint = leftLeg.GetComponent<HingeJoint>();
-        rightHingeJoint = rightLeg.GetComponent<HingeJoint>();
+        target = GameObject.Find("Target").transform;
+        // RÃ©cupÃ©rer les `HingeJoint` attachÃ©s aux Rigidbodies des jambes
+        leftHingeJoint = leftLeg.GameObject().GetComponent<HingeJoint>();
+        rightHingeJoint = rightLeg.GameObject().GetComponent<HingeJoint>();
     }
-
 
     private void Update()
     {
-        // Calculez la distance parcourue depuis le début de la simulation
+        // Calculez la distance parcourue depuis le dÃ©but de la simulation
         distanceTraveled = Vector3.Distance(startingPosition, transform.position);
 
-        // Raycast vers le bas à partir des pieds de la créature pour détecter la pente
+        // Raycast vers le bas Ã  partir des pieds de la crÃ©ature pour dÃ©tecter la pente
         RaycastHit leftHit;
         RaycastHit rightHit;
         float maxRaycastDistance = 1.0f; // Ajustez cette valeur selon la hauteur de vos pieds par rapport au sol
@@ -61,42 +64,42 @@ public class CreatureController : MonoBehaviour
             }
         }
 
-        // Obtenez la vitesse linéaire du Rigidbody
+        // Obtenez la vitesse linÃ©aire du Rigidbody
         speed = rb.velocity.magnitude;
-
-
-       
     }
 
-    // Méthode pour appliquer les forces aux articulations
+    // MÃ©thode pour appliquer les forces aux articulations
     private void FixedUpdate()
     {
-       Debug.Log("L : " + leftLegForce + " R : " + rightLegForce);
-        MoveLegs(10, 10);//leftLegForce, rightLegForce);
+        // Appliquer les forces aux articulations pour marcher
+        leftLeg.AddForce(Vector3.forward * leftLegForce);
+        rightLeg.AddForce(Vector3.forward * rightLegForce);
     }
 
+    public void SetNeuralNetwork(NeuralNetwork neuralNetwork)
+    {
+        this.neuralNetwork = neuralNetwork;
+    }
 
+    
+    // Method to set the neural network's weights
+    public void SetNeuralNetworkWeights(float[] weights)
+    {
+        // Set the neural network's weights using the provided array
+        if (neuralNetwork != null)
+        {
+            neuralNetwork.SetWeights(weights);
+        }
+    }
+    
+    // MÃ©thode pour dÃ©finir les valeurs de sortie du rÃ©seau de neurones
     public void SetOutputValues(float leftForce, float rightForce)
     {
         leftLegForce = leftForce;
         rightLegForce = rightForce;
     }
 
-
-    // Méthode pour déplacer les jambes avec les `HingeJoint`
-    private void MoveLegs(float leftLegForce, float rightLegForce)
-    {
-        // Convertir la force des jambes en angles pour les `HingeJoint`
-        float leftLegAngle = leftLegForce * 45f; // Angle de -45 à 45 degrés
-        float rightLegAngle = rightLegForce * 45f; // Angle de -45 à 45 degrés
-
-        // Contrôler les `HingeJoint` avec les angles calculés
-        SetLegAngles(leftLegAngle, rightLegAngle);
-    }
-
-
-
-    // Méthode pour contrôler les jambes avec les `HingeJoint`
+    // MÃ©thode pour contrÃ´ler les jambes avec les `HingeJoint`
     public void SetLegAngles(float leftAngle, float rightAngle)
     {
         // Appliquer l'angle aux `HingeJoint`
@@ -109,18 +112,22 @@ public class CreatureController : MonoBehaviour
         rightHingeJoint.spring = rightSpring;
     }
 
-  
-
-    // Méthode pour obtenir les informations d'environnement (inputs)
-    // Cette méthode doit être appelée dans la mise à jour de votre simulation pour mettre à jour les valeurs des inputs
+    // MÃ©thode pour obtenir les informations d'environnement (inputs)
+    // Cette mÃ©thode doit Ãªtre appelÃ©e dans la mise Ã  jour de votre simulation pour mettre Ã  jour les valeurs des inputs
     public float[] GetEnvironmentInputs()
     {
-        // Remplacez les valeurs ci-dessous par les véritables données d'environnement que votre créature reçoit
+        // Remplacez les valeurs ci-dessous par les vÃ©ritables donnÃ©es d'environnement que votre crÃ©ature reÃ§oit
         // Par exemple, vous pouvez obtenir la distance parcourue, l'angle de la pente, la vitesse, etc.
 
-        distanceToTarget = Vector3.Distance(transform.position, target.position); // Distance entre la créature et l'objectif
+        distanceToTarget = Vector3.Distance(transform.position, target.position); // Distance entre la crÃ©ature et l'objectif
 
         // Retourner les valeurs des inputs sous forme d'un tableau
-        return new float[] { distanceTraveled, slopeAngle, speed, distanceToTarget};
+        return new float[] { distanceTraveled, slopeAngle, speed, distanceToTarget };
+    }
+
+    public bool TerminationConditionMet()
+    {
+        if (distanceToTarget <= 3) return true;
+        else return false;
     }
 }
