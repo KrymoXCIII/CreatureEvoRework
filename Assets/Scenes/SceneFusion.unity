@@ -2108,7 +2108,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 439071852}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 20.65, y: 2, z: 14.67}
+  m_LocalPosition: {x: 20, y: 2, z: 20}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -5166,8 +5166,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   spawnRate: 1
-  floorScale: 1
-  myPrefab: {fileID: 5781711983947700257, guid: 4125faa411fccfb488ace4e2f580f335, type: 3}
+  floorScale: 0.25
+  myPrefab: {fileID: 1561903100694814032, guid: 21903ae5081430b4ea8373e3a30ad673, type: 3}
   timeElapsed: 0
   foodTab: []
   foodIsSpawned: 0
@@ -5180,7 +5180,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1274662783}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 4.9594045, y: -38.8392, z: 88.156555}
+  m_LocalPosition: {x: 20, y: -1.5, z: 20}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
