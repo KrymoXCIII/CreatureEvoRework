@@ -9,7 +9,7 @@ public class WaveFunctionCollapse : MonoBehaviour
 
     public GameObject cube;
 
-    private int sizeX = 40, sizeY = 2, sizeZ = 40;
+    public int sizeX = 40, sizeY = 2, sizeZ = 40;
 
     //private int curX, curY;
     public int sizeNeighborhood = 1;
@@ -79,8 +79,7 @@ public class WaveFunctionCollapse : MonoBehaviour
     void Update()
     {
         //Créer des modèles de contraintes pour chaque tuile ???
-
-        
+        float start = Time.realtimeSinceStartup;
 
         while (curTile != null)
         {
@@ -127,6 +126,8 @@ public class WaveFunctionCollapse : MonoBehaviour
                     }
                 }
             }
+            float end = Time.realtimeSinceStartup;
+            Debug.Log(end-start);
         }
         terrainGenerated = true;
 
