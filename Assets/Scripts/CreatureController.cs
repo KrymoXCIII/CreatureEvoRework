@@ -1,6 +1,7 @@
 using System;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class CreatureController : MonoBehaviour
 {
@@ -13,6 +14,8 @@ public class CreatureController : MonoBehaviour
     //public float headHeight;
     public float speed;
     public float distanceToTarget;
+
+    public float energy;
 
     private Vector3 startingPosition;
     public Transform leftFoot;
@@ -41,16 +44,33 @@ public class CreatureController : MonoBehaviour
 
     public FoodSpawner foodSpawner;
 
+    UnityEngine.SceneManagement.Scene scene;
+
+    float timeOut = 10f;
+
+
+
     private void Awake()
     {
-        foodSpawner = GameObject.Find("FoodSpawner").GetComponent<FoodSpawner>();
-        target = GetClosestFood(foodSpawner.foodTab);
+        scene = SceneManager.GetActiveScene();
+
+        if (scene.name == "SceneCreature")
+        {
+            target = GameObject.Find("Target").transform;
+        }
+        else
+        {
+            foodSpawner = GameObject.Find("FoodSpawner").GetComponent<FoodSpawner>();
+            target = GetClosestFood(foodSpawner.foodTab);
+        }
+        
         distanceToTarget = Vector3.Distance(transform.position, target.position);
         // Récupérer les `HingeJoint` attachés aux Rigidbodies des jambes
         leftHingeJoint = leftLeg.GameObject().GetComponent<HingeJoint>();
         rightHingeJoint = rightLeg.GameObject().GetComponent<HingeJoint>();
         startingPosition = transform.position;
         rb = GetComponent<Rigidbody>();
+       
     }
 
     private void Start()
@@ -68,8 +88,8 @@ public class CreatureController : MonoBehaviour
         // Angle de la tête
         headAngleX = transform.rotation.x;
         headAngleZ = transform.rotation.z;
+
         
-       
        
        
         // Obtenez la vitesse linéaire du Rigidbody
@@ -98,7 +118,7 @@ public class CreatureController : MonoBehaviour
         
         Debug.Log("L : " + leftLegForce + " R : " + rightLegForce);
         // Appliquer les forces aux articulations pour marcher en utilisant le moteur
-        float motorSpeedMultiplier = 300f; // Ajustez cette valeur selon la vitesse souhaitée
+        float motorSpeedMultiplier = 100f; // Ajustez cette valeur selon la vitesse souhaitée
         
         leftHingeJoint.motor = new JointMotor { targetVelocity = leftLegForce * motorSpeedMultiplier, force = 100f };
 
@@ -172,7 +192,16 @@ public class CreatureController : MonoBehaviour
     public bool TerminationConditionMet()
     {
         //if (distanceToTarget <= 5 || (DateTime.Now >= startTime.AddSeconds(5)) && distanceToTarget > 20 ) return true;
-        if (DateTime.Now >= startTime.AddSeconds(10)) return true;
+        if (DateTime.Now >= startTime.AddSeconds(timeOut)) return true;
         else return false;
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.tag == "Finish")
+        {
+            timeOut += 10;
+            other.gameObject.SetActive(false);
+        }
     }
 }

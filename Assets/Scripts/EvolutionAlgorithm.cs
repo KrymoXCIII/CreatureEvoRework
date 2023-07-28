@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using UnityEditor.SearchService;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using Random = UnityEngine.Random;
 
 public class EvolutionAlgorithm : MonoBehaviour
@@ -25,11 +27,22 @@ public class EvolutionAlgorithm : MonoBehaviour
 
     bool canStartEvo = true;
 
+    UnityEngine.SceneManagement.Scene scene;
+
     private void Start()
     {
+        scene = SceneManager.GetActiveScene();
+        if (scene.name == "SceneCreature")
+        {
+            StartEvolution();
+        }
+        else
+        {
+            foodSpawner = GameObject.Find("FoodSpawner").GetComponent<FoodSpawner>();
+        }
         //StartEvolution();
         //WFC = GameObject.Find("WaveManager").GetComponent<WaveFunctionCollapse>();
-        foodSpawner = GameObject.Find("FoodSpawner").GetComponent<FoodSpawner>();
+       
     }
 
     // Call this method to start the evolution
@@ -153,8 +166,13 @@ public class EvolutionAlgorithm : MonoBehaviour
 
     private void Update()
     {
-        
-            if(foodSpawner.foodIsSpawned)
+        if (scene.name != "SceneCreature")
+        {
+
+
+
+
+            if (foodSpawner.foodIsSpawned)
             {
                 if (canStartEvo)
                 {
@@ -162,9 +180,9 @@ public class EvolutionAlgorithm : MonoBehaviour
                     canStartEvo = false;
                 }
             }
-            
-           
-        
+
+
+        }
         
         
         // Check if the evolution is in progress
