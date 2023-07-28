@@ -118,7 +118,7 @@ public class CreatureController : MonoBehaviour
         
         Debug.Log("L : " + leftLegForce + " R : " + rightLegForce);
         // Appliquer les forces aux articulations pour marcher en utilisant le moteur
-        float motorSpeedMultiplier = 100f; // Ajustez cette valeur selon la vitesse souhaitée
+        float motorSpeedMultiplier = 200f; // Ajustez cette valeur selon la vitesse souhaitée
         
         leftHingeJoint.motor = new JointMotor { targetVelocity = leftLegForce * motorSpeedMultiplier, force = 100f };
 

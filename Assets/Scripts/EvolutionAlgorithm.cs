@@ -9,7 +9,7 @@ public class EvolutionAlgorithm : MonoBehaviour
 {
     public int populationSize = 5;
     public int inputSize = 5; // Replace this with the actual input size of your creature
-    public int hiddenSize = 8;
+    public int hiddenSize = 30;
     public int outputSize = 2; // Replace this with the actual output size of your creature
 
     public GameObject creaturePrefab; // Drag your creature prefab here
