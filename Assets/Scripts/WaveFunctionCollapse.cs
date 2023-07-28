@@ -30,6 +30,8 @@ public class WaveFunctionCollapse : MonoBehaviour
     private RoadTile empty, roadNS, roadEW, roadCross, roadUpN, roadUpS, roadUpE, roadUpW;
     public GameObject roadNSGO, roadEWGO, roadUpNGO, roadCrossGO, roadUpSGO, roadUpEGO, roadUpWGO;
 
+    public bool terrainGenerated = false;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -126,6 +128,7 @@ public class WaveFunctionCollapse : MonoBehaviour
                 }
             }
         }
+        terrainGenerated = true;
 
         /*
     while (tileToCheck.Count() > 0)

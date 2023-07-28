@@ -39,10 +39,12 @@ public class CreatureController : MonoBehaviour
     // variable pour le compteur
     private DateTime startTime;
 
+    public FoodSpawner foodSpawner;
 
     private void Awake()
     {
-        target = GameObject.Find("Target").transform;
+        foodSpawner = GameObject.Find("FoodSpawner").GetComponent<FoodSpawner>();
+        target = GetClosestFood(foodSpawner.foodTab);
         distanceToTarget = Vector3.Distance(transform.position, target.position);
         // Récupérer les `HingeJoint` attachés aux Rigidbodies des jambes
         leftHingeJoint = leftLeg.GameObject().GetComponent<HingeJoint>();
@@ -58,6 +60,7 @@ public class CreatureController : MonoBehaviour
 
     private void Update()
     {
+        
         // Calculez la distance parcourue depuis le début de la simulation
         distanceTraveled = Vector3.Distance(startingPosition, transform.position);
         // Distance entre la créature et l'objectif
@@ -103,6 +106,31 @@ public class CreatureController : MonoBehaviour
         rightHingeJoint.motor = new JointMotor { targetVelocity = rightLegForce * motorSpeedMultiplier, force = 100f };
 
     }
+
+   
+        Transform GetClosestFood(Transform[] food)
+        {
+            Transform bestTarget = null;
+            float closestDistanceSqr = Mathf.Infinity;
+            Vector3 currentPosition = transform.position;
+            foreach (Transform potentialTarget in food)
+            {
+                Vector3 directionToTarget = potentialTarget.position - currentPosition;
+                float dSqrToTarget = directionToTarget.sqrMagnitude;
+                if (dSqrToTarget < closestDistanceSqr)
+                {
+                    closestDistanceSqr = dSqrToTarget;
+                    bestTarget = potentialTarget;
+                }
+            }
+
+            return bestTarget;
+        }
+
+    
+
+    
+
 
     public void SetNeuralNetwork(NeuralNetwork neuralNetwork)
     {

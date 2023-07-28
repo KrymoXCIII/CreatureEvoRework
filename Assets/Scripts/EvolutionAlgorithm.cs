@@ -20,9 +20,16 @@ public class EvolutionAlgorithm : MonoBehaviour
     private CreatureController currentCreatureController;
     private bool evolving = false;
 
+    public WaveFunctionCollapse WFC;
+    public FoodSpawner foodSpawner;
+
+    bool canStartEvo = true;
+
     private void Start()
     {
-        StartEvolution();
+        //StartEvolution();
+        //WFC = GameObject.Find("WaveManager").GetComponent<WaveFunctionCollapse>();
+        foodSpawner = GameObject.Find("FoodSpawner").GetComponent<FoodSpawner>();
     }
 
     // Call this method to start the evolution
@@ -146,6 +153,18 @@ public class EvolutionAlgorithm : MonoBehaviour
 
     private void Update()
     {
+        
+            if(foodSpawner.foodIsSpawned)
+            {
+                if (canStartEvo)
+                {
+                    StartEvolution();
+                    canStartEvo = false;
+                }
+            }
+            
+           
+        
         
         
         // Check if the evolution is in progress
