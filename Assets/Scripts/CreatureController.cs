@@ -66,21 +66,7 @@ public class CreatureController : MonoBehaviour
         headAngleX = transform.rotation.x;
         headAngleZ = transform.rotation.z;
         
-        // Raycast vers le bas à partir des pieds de la créature pour détecter la pente
-      /*  RaycastHit leftHit;
-        RaycastHit rightHit;
-        float maxRaycastDistance = 1.0f; // Ajustez cette valeur selon la hauteur de vos pieds par rapport au sol
-
-        if (Physics.Raycast(leftFoot.position, Vector3.down, out leftHit, maxRaycastDistance))
-        {
-            if (Physics.Raycast(rightFoot.position, Vector3.down, out rightHit, maxRaycastDistance))
-            {
-                // Calculez l'angle de la pente en utilisant les deux points de contact
-                Vector3 slopeVector = leftHit.point - rightHit.point;
-                slopeAngle = Vector3.Angle(Vector3.up, slopeVector);
-            }
-        }
-        */
+       
        
        
         // Obtenez la vitesse linéaire du Rigidbody
@@ -109,7 +95,7 @@ public class CreatureController : MonoBehaviour
         
         Debug.Log("L : " + leftLegForce + " R : " + rightLegForce);
         // Appliquer les forces aux articulations pour marcher en utilisant le moteur
-        float motorSpeedMultiplier = 100f; // Ajustez cette valeur selon la vitesse souhaitée
+        float motorSpeedMultiplier = 300f; // Ajustez cette valeur selon la vitesse souhaitée
         
         leftHingeJoint.motor = new JointMotor { targetVelocity = leftLegForce * motorSpeedMultiplier, force = 100f };
 
@@ -157,7 +143,7 @@ public class CreatureController : MonoBehaviour
 
     public bool TerminationConditionMet()
     {
-        if (distanceToTarget <= 5 || (DateTime.Now >= startTime.AddSeconds(2)) && distanceTraveled < 2 ) return true;
+        if (distanceToTarget <= 5 || (DateTime.Now >= startTime.AddSeconds(5)) && distanceToTarget > 20 ) return true;
         else return false;
     }
 }

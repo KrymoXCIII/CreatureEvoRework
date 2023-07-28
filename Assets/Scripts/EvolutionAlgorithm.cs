@@ -5,7 +5,7 @@ using Random = UnityEngine.Random;
 
 public class EvolutionAlgorithm : MonoBehaviour
 {
-    public int populationSize = 100;
+    public int populationSize = 5;
     public int inputSize = 5; // Replace this with the actual input size of your creature
     public int hiddenSize = 8;
     public int outputSize = 2; // Replace this with the actual output size of your creature
@@ -15,6 +15,7 @@ public class EvolutionAlgorithm : MonoBehaviour
 
     private List<NeuralNetwork> population;
     private int currentCreatureIndex = 0;
+    private int currentGenerationIndex = 1;
 
     private CreatureController currentCreatureController;
     private bool evolving = false;
@@ -55,7 +56,7 @@ public class EvolutionAlgorithm : MonoBehaviour
     // Method to spawn a new creature with the given neural network
     private void SpawnCreature(NeuralNetwork neuralNetwork)
     {
-        Debug.Log(("Spawning Creature  "));
+        Debug.Log(("Spawning Creature  " + currentCreatureIndex + " Of Generation " + currentGenerationIndex));
         if (currentCreatureController != null)
         {
             Destroy(currentCreatureController.gameObject);
@@ -94,6 +95,7 @@ public class EvolutionAlgorithm : MonoBehaviour
     private void EvolvePopulation()
     {
         Debug.Log("Evolve Population");
+        currentGenerationIndex++;
 
         // Sort the population by fitness in descending order
         population.Sort((a, b) => b.fitness.CompareTo(a.fitness));
@@ -182,14 +184,17 @@ public class EvolutionAlgorithm : MonoBehaviour
         // Distance entre la créature et l'objectif (plus proche de l'objectif est meilleur)
         float proximityScore = 1f / (1f + creature.distanceToTarget);
 
+        float distanceScore = 1f / (1f + creature.distanceTraveled);
+
         // Poids attribués à chaque critère (ajustez ces valeurs selon vos préférences)
         //float verticalOrientationWeight = 0.7f;
-        float proximityWeight = 0.3f;
-        float headAngleWeight = 0.7f;
+        float proximityWeight = 0.7f;
+        float headAngleWeight = 0.3f;
+        float distanceWeight = 0.7f;
 
         
         // Calcul de la fitness en combinant les critères avec les poids
-        float fitness = headAngleWeight * headAngleScore + proximityWeight * proximityScore;
+        float fitness = (headAngleWeight * headAngleScore + proximityWeight * proximityScore + distanceWeight * distanceScore) / 3;
         Debug.Log("Fitness : " + fitness);
         return fitness;
     }

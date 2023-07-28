@@ -78,7 +78,13 @@ public class NeuralNetwork
     // Fonction d'activation (vous pouvez utiliser une fonction différente selon les besoins)
     private float ActivationFunction(float value)
     {
-        return Mathf.Clamp(value, -1f, 1f);
+        //return Mathf.Clamp(value, -1f, 1f);
+        //return 2f / (1f + Mathf.Exp(-value)) - 1f;
+        if (value < 0)
+        {
+            value = value / 10;
+        }
+        return value;
     }
 
     // Méthode pour obtenir les poids du réseau de neurones
