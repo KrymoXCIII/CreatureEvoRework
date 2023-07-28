@@ -224,7 +224,7 @@ Transform:
   m_GameObject: {fileID: 1483233095145925610}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 1, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.25, y: 0.25, z: 0.25}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 8388002464358990722}
@@ -339,6 +339,7 @@ MonoBehaviour:
   leftLeg: {fileID: 7813328657073940973}
   rightLeg: {fileID: 2051475889453638312}
   target: {fileID: 0}
+  foodSpawner: {fileID: 0}
 --- !u!1 &1571765751649921420
 GameObject:
   m_ObjectHideFlags: 0

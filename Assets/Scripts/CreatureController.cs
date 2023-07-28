@@ -171,7 +171,8 @@ public class CreatureController : MonoBehaviour
 
     public bool TerminationConditionMet()
     {
-        if (distanceToTarget <= 5 || (DateTime.Now >= startTime.AddSeconds(5)) && distanceToTarget > 20 ) return true;
+        //if (distanceToTarget <= 5 || (DateTime.Now >= startTime.AddSeconds(5)) && distanceToTarget > 20 ) return true;
+        if (DateTime.Now >= startTime.AddSeconds(10)) return true;
         else return false;
     }
 }

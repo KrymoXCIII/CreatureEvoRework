@@ -5,7 +5,7 @@ using UnityEngine;
 public class FoodSpawner : MonoBehaviour
 {
     public float spawnRate = 1;
-    public int floorScale = 1;
+    public float floorScale = .25f;
     public GameObject myPrefab;
     public float timeElapsed = 0;
     public Transform[] foodTab;
@@ -43,9 +43,34 @@ public class FoodSpawner : MonoBehaviour
 
     void SpawnFood(int index)
     {
-        int x = Random.Range(-100, 101) * floorScale;
-        int z = Random.Range(-100, 101) * floorScale;
-        GameObject food = Instantiate(myPrefab, new Vector3((float)x, 0.75f, (float)z), Quaternion.identity);
-        foodTab[index] = food.transform;
+        float x = Random.Range(0, 160) * floorScale;
+        float z = Random.Range(0, 160) * floorScale;
+
+        RaycastHit hit;
+
+       
+       
+            
+           
+            
+            
+            Vector3 rayStart = new Vector3(x,50,z);
+            if (Physics.Raycast(rayStart,Vector3.down, out hit))
+            {
+                // Draw a line representing the raycast in the scene view for debugging purposes
+                Debug.DrawRay(rayStart, Vector3.down, Color.red);
+                GameObject food = Instantiate(myPrefab,new Vector3(hit.point.x,hit.point.y + 0.25f,hit.point.z), Quaternion.identity);
+                foodTab[index] = food.transform;
+
+            }
+            
+        
+
+
+
+
+
+
+        
     }
 }
