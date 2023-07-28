@@ -14,8 +14,8 @@ public class EvolutionAlgorithm : MonoBehaviour
     public Transform spawnPoint; // Drag the spawn point GameObject here
 
     private List<NeuralNetwork> population;
-    private int currentCreatureIndex = 0;
-    private int currentGenerationIndex = 1;
+    public int currentCreatureIndex = 0;
+    public int currentGenerationIndex = 1;
 
     private CreatureController currentCreatureController;
     private bool evolving = false;

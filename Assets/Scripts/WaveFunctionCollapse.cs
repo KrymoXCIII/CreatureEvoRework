@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using TMPro;
 using UnityEngine;
 
 public class WaveFunctionCollapse : MonoBehaviour
@@ -8,7 +9,7 @@ public class WaveFunctionCollapse : MonoBehaviour
     private WFCTile[,,] grid;
 
     public GameObject cube;
-
+    public string timeUse;
     public int sizeX = 40, sizeY = 2, sizeZ = 40;
 
     //private int curX, curY;
@@ -80,56 +81,63 @@ public class WaveFunctionCollapse : MonoBehaviour
     {
         //Créer des modèles de contraintes pour chaque tuile ???
         float start = Time.realtimeSinceStartup;
-
-        while (curTile != null)
+        if (!terrainGenerated)
         {
-            if (curTile.tilePossible.Count() > 1)
+            while (curTile != null)
             {
-                int rand = Random.Range(0, curTile.tilePossible.Count());
-                curTile.cell = curTile.tilePossible[rand];
-                curTile.tilePossible.Clear();
-            } else if(curTile.tilePossible.Count() == 1)
-            {
-                curTile.cell = curTile.tilePossible[0];
-                curTile.tilePossible.Clear();
-            }
-            else
-            {
-                curTile.cell = 0;
-            }
-            //CollapseTileRandom(nextTile);
-
-            //Instanciation de la tile
-            if (curTile.cell > 0)
-            {
-                Instantiate(availableTiles[curTile.cell].roadGO,
-                    new Vector3(curTile.posX, curTile.posY, curTile.posZ),
-                    availableTiles[curTile.cell].roadGO.transform.rotation);
-            }
-
-            propagateTile(curTile);
-            
-            curTile = null;
-            int nbPoss = 10;
-
-            for (int x = 0; x < sizeX; x++)
-            {
-                for (int y = 0; y < sizeY; y++)
+                if (curTile.tilePossible.Count() > 1)
                 {
-                    for (int z = 0; z < sizeZ; z++)
+                    int rand = Random.Range(0, curTile.tilePossible.Count());
+                    curTile.cell = curTile.tilePossible[rand];
+                    curTile.tilePossible.Clear();
+                } else if(curTile.tilePossible.Count() == 1)
+                {
+                    curTile.cell = curTile.tilePossible[0];
+                    curTile.tilePossible.Clear();
+                }
+                else
+                {
+                    curTile.cell = 0;
+                }
+                //CollapseTileRandom(nextTile);
+
+                //Instanciation de la tile
+                if (curTile.cell > 0)
+                {
+                    Instantiate(availableTiles[curTile.cell].roadGO,
+                        new Vector3(curTile.posX, curTile.posY, curTile.posZ),
+                        availableTiles[curTile.cell].roadGO.transform.rotation);
+                }
+
+                propagateTile(curTile);
+            
+                curTile = null;
+                int nbPoss = 10;
+
+                for (int x = 0; x < sizeX; x++)
+                {
+                    for (int y = 0; y < sizeY; y++)
                     {
-                        if (grid[x, y, z].tilePossible.Count() > 0 && grid[x, y, z].tilePossible.Count() <= nbPoss && grid[x, y, z].cell == -1)
+                        for (int z = 0; z < sizeZ; z++)
                         {
-                            nbPoss = grid[x, y, z].tilePossible.Count();
-                            curTile = grid[x, y, z];
+                            if (grid[x, y, z].tilePossible.Count() > 0 && grid[x, y, z].tilePossible.Count() <= nbPoss && grid[x, y, z].cell == -1)
+                            {
+                                nbPoss = grid[x, y, z].tilePossible.Count();
+                                curTile = grid[x, y, z];
+                            }
                         }
                     }
                 }
-            }
+
+            } 
             float end = Time.realtimeSinceStartup;
-            Debug.Log(end-start);
+            float tempfloat = end - start;
+            
+            timeUse= tempfloat.ToString();
+            terrainGenerated = true;
         }
-        terrainGenerated = true;
+
+        
 
         /*
     while (tileToCheck.Count() > 0)
