@@ -132,7 +132,7 @@ public class WaveFunctionCollapse : MonoBehaviour
             } 
             float end = Time.realtimeSinceStartup;
             float tempfloat = end - start;
-            
+            Debug.Log(tempfloat);
             timeUse= tempfloat.ToString();
             terrainGenerated = true;
         }

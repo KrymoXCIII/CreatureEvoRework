@@ -464,6 +464,8 @@ MonoBehaviour:
   outputSize: 2
   creaturePrefab: {fileID: 1483233095145925610, guid: 8636125d34b0b4d319f40108fac8426a, type: 3}
   spawnPoint: {fileID: 173130786}
+  currentCreatureIndex: 0
+  currentGenerationIndex: 1
   WFC: {fileID: 0}
   foodSpawner: {fileID: 0}
 --- !u!4 &1934252987
