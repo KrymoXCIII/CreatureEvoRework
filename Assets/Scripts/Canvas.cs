@@ -27,6 +27,6 @@ public class Canvas : MonoBehaviour
         temps.text = WFC.timeUse;
         Nbcreature.text = EA.currentCreatureIndex.ToString();
         generation.text = EA.currentGenerationIndex.ToString();
-        fitness.text = NeuralN.fitness.ToString();
+        //fitness.text = NeuralN.fitness.ToString();
     }
 }

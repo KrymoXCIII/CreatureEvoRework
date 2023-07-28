@@ -6,10 +6,18 @@
   <component name="ChangeListManager">
     <list default="true" id="6e87af62-5cdd-4c3b-9dd2-7f4c2dafe9da" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.CreatureEvoRework/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.CreatureEvoRework/.idea/workspace.xml" afterDir="false" />
+<<<<<<< Updated upstream
       <change beforePath="$PROJECT_DIR$/Assets/Scenes/SceneCreature.unity" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scenes/SceneCreature.unity" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Scripts/Canvas.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Canvas.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Scripts/WaveFunctionCollapse.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/WaveFunctionCollapse.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Packages/packages-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/Packages/packages-lock.json" afterDir="false" />
+=======
+      <change beforePath="$PROJECT_DIR$/Assets/Prefabs/Creature.prefab" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Prefabs/Creature.prefab" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scenes/SceneFusion.unity" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scenes/SceneFusion.unity" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/EvolutionAlgorithm.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/EvolutionAlgorithm.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/NeuralNetwork.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/NeuralNetwork.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/WaveFunctionCollapse.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/WaveFunctionCollapse.cs" afterDir="false" />
+>>>>>>> Stashed changes
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
