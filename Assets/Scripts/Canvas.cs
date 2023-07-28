@@ -10,21 +10,23 @@ public class Canvas : MonoBehaviour
     public TextMeshProUGUI Nbcreature;
     public TextMeshProUGUI generation;
     public TextMeshProUGUI fitness;
+    public NeuralNetwork NeuralN;
     
 
     public EvolutionAlgorithm EA;
     // Start is called before the first frame update
     void Start()
     {
-        temps.text = WFC.timeUse;
-        Nbcreature.text = EA.currentCreatureIndex.ToString();
-        generation.text = EA.currentGenerationIndex.ToString();
-        
+
+
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+        temps.text = WFC.timeUse;
+        Nbcreature.text = EA.currentCreatureIndex.ToString();
+        generation.text = EA.currentGenerationIndex.ToString();
+        //fitness.text = NeuralN.fitness.ToString();
     }
 }
