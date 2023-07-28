@@ -7,6 +7,9 @@ public class CreatureController : MonoBehaviour
     // Variables d'environnement  
     public float distanceTraveled;
     public float slopeAngle;
+
+    public float headAngleX;
+    public float headAngleZ;
     //public float headHeight;
     public float speed;
     public float distanceToTarget;
@@ -59,9 +62,12 @@ public class CreatureController : MonoBehaviour
         distanceTraveled = Vector3.Distance(startingPosition, transform.position);
         // Distance entre la créature et l'objectif
         distanceToTarget = Vector3.Distance(transform.position, target.position);
-        // Raycast vers le bas à partir des pieds de la créature pour détecter la pente
+        // Angle de la tête
+        headAngleX = transform.rotation.x;
+        headAngleZ = transform.rotation.z;
         
-        RaycastHit leftHit;
+        // Raycast vers le bas à partir des pieds de la créature pour détecter la pente
+      /*  RaycastHit leftHit;
         RaycastHit rightHit;
         float maxRaycastDistance = 1.0f; // Ajustez cette valeur selon la hauteur de vos pieds par rapport au sol
 
@@ -74,13 +80,8 @@ public class CreatureController : MonoBehaviour
                 slopeAngle = Vector3.Angle(Vector3.up, slopeVector);
             }
         }
-
-       /*RaycastHit headHit;
-       if(Physics.Raycast(transform.position,Vector3.down, out headHit))
-       {
-           headHeight = Vector3.Distance(transform.position, headHit.point);
-       }
         */
+       
        
         // Obtenez la vitesse linéaire du Rigidbody
         speed = rb.velocity.magnitude;
@@ -93,16 +94,28 @@ public class CreatureController : MonoBehaviour
         SetOutputValues(outputs[0], outputs[1]);
 
         // Appliquer les forces aux articulations pour marcher
-        leftLeg.AddForce(Vector3.forward * leftLegForce);
-        rightLeg.AddForce(Vector3.forward * rightLegForce);
+        //leftLeg.AddForce(Vector3.forward * leftLegForce);
+        //rightLeg.AddForce(Vector3.forward * rightLegForce);
+        
+        
+        
+        
+        
     }
 
     // Méthode pour appliquer les forces aux articulations
     private void FixedUpdate()
     {
-        // Appliquer les forces aux articulations pour marcher
-        leftLeg.AddForce(Vector3.forward * leftLegForce);
-        rightLeg.AddForce(Vector3.forward * rightLegForce);
+        
+        Debug.Log("L : " + leftLegForce + " R : " + rightLegForce);
+        // Appliquer les forces aux articulations pour marcher en utilisant le moteur
+        float motorSpeedMultiplier = 100f; // Ajustez cette valeur selon la vitesse souhaitée
+        
+        leftHingeJoint.motor = new JointMotor { targetVelocity = leftLegForce * motorSpeedMultiplier, force = 100f };
+
+        
+        rightHingeJoint.motor = new JointMotor { targetVelocity = rightLegForce * motorSpeedMultiplier, force = 100f };
+
     }
 
     public void SetNeuralNetwork(NeuralNetwork neuralNetwork)
@@ -129,27 +142,7 @@ public class CreatureController : MonoBehaviour
         
     }
 
-    // Méthode pour contrôler les jambes avec les `HingeJoint`
-    public void SetLegAngles(float leftAngle, float rightAngle)
-    {
-        // Appliquer l'angle aux `HingeJoint`
-        try
-        {
-            JointSpring leftSpring = leftHingeJoint.spring;
-            leftSpring.targetPosition = leftAngle;
-            leftHingeJoint.spring = leftSpring;
-
-            JointSpring rightSpring = rightHingeJoint.spring;
-            rightSpring.targetPosition = rightAngle;
-            rightHingeJoint.spring = rightSpring;
-        }
-        catch (Exception e)
-        {
-            Debug.Log("Exception : " + e);
-        }
-        
-    }
-
+    
     // Méthode pour obtenir les informations d'environnement (inputs)
     // Cette méthode doit être appelée dans la mise à jour de votre simulation pour mettre à jour les valeurs des inputs
     public float[] GetEnvironmentInputs()
@@ -159,12 +152,12 @@ public class CreatureController : MonoBehaviour
 
 
         // Retourner les valeurs des inputs sous forme d'un tableau
-        return new float[] { distanceTraveled, slopeAngle, speed, distanceToTarget };
+        return new float[] { distanceTraveled, headAngleX, headAngleZ, speed, distanceToTarget };
     }
 
     public bool TerminationConditionMet()
     {
-        if (distanceToTarget <= 1 || DateTime.Now >= startTime.AddSeconds(10) ) return true;
+        if (distanceToTarget <= 5 || (DateTime.Now >= startTime.AddSeconds(2)) && distanceTraveled < 2 ) return true;
         else return false;
     }
 }

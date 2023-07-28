@@ -1,10 +1,12 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class EvolutionAlgorithm : MonoBehaviour
 {
     public int populationSize = 100;
-    public int inputSize = 4; // Replace this with the actual input size of your creature
+    public int inputSize = 5; // Replace this with the actual input size of your creature
     public int hiddenSize = 8;
     public int outputSize = 2; // Replace this with the actual output size of your creature
 
@@ -63,7 +65,7 @@ public class EvolutionAlgorithm : MonoBehaviour
         GameObject newCreature = Instantiate(creaturePrefab, spawnPoint.position, Quaternion.identity);
         currentCreatureController = newCreature.GetComponent<CreatureController>();
         currentCreatureController.SetOutputValues(0f, 0f); // Optionally set initial output values
-        currentCreatureController.SetLegAngles(0f, 0f); // Optionally set initial leg angles
+        //currentCreatureController.SetLegAngles(0f, 0f); // Optionally set initial leg angles
         currentCreatureController.SetNeuralNetwork(neuralNetwork); // Set the neural network of the creature
     
         
@@ -142,6 +144,8 @@ public class EvolutionAlgorithm : MonoBehaviour
 
     private void Update()
     {
+        
+        
         // Check if the evolution is in progress
         if (evolving)
         {
@@ -160,8 +164,17 @@ public class EvolutionAlgorithm : MonoBehaviour
     private float CalculateFitness(CreatureController creature)
     {
         
+        // Calculate the difference between the current angle and the target angle
+        float angleDifferenceX = Mathf.Abs(creature.headAngleX);
+        float angleDifferenceZ = Mathf.Abs(creature.headAngleZ);
+        // Normalize the angle differences to a range of 0 to 1
+        float normalizedDifferenceX = 1f - Mathf.Clamp01(angleDifferenceX / 180f);
+        float normalizedDifferenceZ = 1f - Mathf.Clamp01(angleDifferenceZ / 180f);
+        
+        float headAngleScore = (normalizedDifferenceX) + (normalizedDifferenceZ);
+        
         // Orientation verticale (plus proche de la verticale est meilleur)
-        float verticalOrientationScore = 1f / (1f + Mathf.Abs(180f - creature.slopeAngle));
+        //float verticalOrientationScore = 1f / (1f + Mathf.Abs(180f - creature.slopeAngle));
 
         // Orientation verticale (plus proche de la verticale est meilleur)
         //float verticalOrientationScore = 1f / (1f + Mathf.Abs(creature.slopeAngle));
@@ -170,13 +183,14 @@ public class EvolutionAlgorithm : MonoBehaviour
         float proximityScore = 1f / (1f + creature.distanceToTarget);
 
         // Poids attribués à chaque critère (ajustez ces valeurs selon vos préférences)
-        float verticalOrientationWeight = 0.7f;
+        //float verticalOrientationWeight = 0.7f;
         float proximityWeight = 0.3f;
+        float headAngleWeight = 0.7f;
 
         
         // Calcul de la fitness en combinant les critères avec les poids
-        float fitness = verticalOrientationWeight * verticalOrientationScore + proximityWeight * proximityScore;
-
+        float fitness = headAngleWeight * headAngleScore + proximityWeight * proximityScore;
+        Debug.Log("Fitness : " + fitness);
         return fitness;
     }
 

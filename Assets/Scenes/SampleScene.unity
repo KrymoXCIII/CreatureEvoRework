@@ -338,7 +338,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 881140941}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 50, y: 1.25, z: 0}
+  m_LocalPosition: {x: 0, y: 1.25, z: 50}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -556,8 +556,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   populationSize: 100
-  inputSize: 4
-  hiddenSize: 8
+  inputSize: 5
+  hiddenSize: 10
   outputSize: 2
   creaturePrefab: {fileID: 1483233095145925610, guid: 8636125d34b0b4d319f40108fac8426a, type: 3}
   spawnPoint: {fileID: 173130786}
