@@ -3219,6 +3219,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cube: {fileID: 987678478}
+  sizeX: 40
+  sizeY: 2
+  sizeZ: 40
   sizeNeighborhood: 1
   tileEx: {fileID: 2050905552}
   roadNSGO: {fileID: 863379185908282566, guid: e5886f0927fc42c49a1fcb001bbab797, type: 3}
@@ -5167,7 +5170,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   spawnRate: 1
   floorScale: 0.25
-  myPrefab: {fileID: 1561903100694814032, guid: 21903ae5081430b4ea8373e3a30ad673, type: 3}
+  myPrefab: {fileID: 4240178737920659306, guid: 3eb39840a21c34940955e39366b1fd90, type: 3}
   timeElapsed: 0
   foodTab: []
   foodIsSpawned: 0
